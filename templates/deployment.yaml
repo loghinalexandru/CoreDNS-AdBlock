@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-coredns-deployment
+  labels:
+    app: coredns
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: coredns
+  template:
+    metadata:
+      labels:
+        app: coredns
+    spec:
+      containers:
+        - name: blacklist-runner
+          image: alpine:3.17.0
+          imagePullPolicy: IfNotPresent
+          command:
+             - /bin/sh
+             - -c
+             - echo -e "#!/bin/sh\ncd /etc/blacklist;rm ./hosts;wget -O hosts $(cat /etc/coredns/input)" > /etc/periodic/daily/blacklist-runner;
+               chmod a+x /etc/periodic/daily/blacklist-runner;
+               run-parts /etc/periodic/daily/;
+               crond -f -l 8
+          resources:
+           requests:
+            memory: {{ .Values.resources.blacklistRunner.requests.memory }}
+            cpu: {{ .Values.resources.blacklistRunner.requests.cpu }}
+           limits:
+            memory: {{ .Values.resources.blacklistRunner.limits.memory }}
+          volumeMounts:
+            - name: coredns-blacklist-vol
+              mountPath: /etc/blacklist
+        - name: coredns
+          image: coredns/coredns:1.10.0
+          imagePullPolicy: IfNotPresent
+          resources:
+           requests:
+            memory: {{ .Values.resources.coredns.requests.memory }}
+            cpu: {{ .Values.resources.coredns.requests.cpu }}
+           limits:
+            memory: {{ .Values.resources.coredns.limits.memory }}
+          args: ["-conf", "/etc/coredns/Corefile"]
+          volumeMounts:
+            - name: coredns-config-vol
+              mountPath: /etc/coredns
+            - name: coredns-blacklist-vol
+              mountPath: /etc/blacklist
+          ports:
+            - containerPort: 53
+      volumes:
+        - name: coredns-config-vol
+          configMap:
+            name: {{ .Values.configMap.name }}
+        - name: coredns-blacklist-vol
+          emptyDir:
+            sizeLimit: {{ .Values.emptyDir.size }}

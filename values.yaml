@@ -1,0 +1,35 @@
+replicaCount: 1
+
+service:
+  type: LoadBalancer
+
+configMap:
+  name: coredns-config
+
+# Use this as a hosts file to set custom DNS records
+customRecords: []
+
+blockListUrls: 
+  - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+
+emptyDir:
+  size: 100M
+
+resources:
+  coredns:
+    limits:
+      memory: 65Mi
+    requests:
+      cpu: 100m
+      memory: 65Mi
+  blacklistRunner:
+    limits:
+      memory: 20Mi
+    requests:
+      cpu: 50m
+      memory: 20Mi
+
+autoscaling:
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 65

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configMap.name }}
+data:
+  Corefile: |
+    . {
+        hosts /etc/blacklist/hosts {
+            {{- .Values.customRecords | join "\n" | nindent 12 -}}
+            no_reverse
+            reload 12h
+            fallthrough
+        }
+        forward . 8.8.8.8 9.9.9.9
+        reload
+        cache
+        health
+        errors
+    }
+  input: |
+    {{- .Values.blockListUrls | join "\n" | nindent 4 }}

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-coredns-svc
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: coredns
+  ports:
+    - name: tcp-dns
+      port: 53
+      protocol: TCP
+      targetPort: 53
+    - name: udp-dns
+      port: 53
+      protocol: UDP
+      targetPort: 53

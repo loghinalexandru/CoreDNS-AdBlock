@@ -1,0 +1,9 @@
+apiVersion: v2
+name: coredns
+description: Helm Chart for custom CoreDNS with AdBlock
+
+type: application
+
+version: 0.1.0
+
+appVersion: "1.0.0"
