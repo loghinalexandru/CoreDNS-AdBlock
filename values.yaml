@@ -3,12 +3,10 @@ replicaCount: 1
 service:
   type: LoadBalancer
 
-configMap:
-  name: coredns-config
-
 # Use this as a hosts file to set custom DNS records
 customRecords: []
 
+# The lists must be the same format as a hosts file
 blockListUrls: 
   - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
 

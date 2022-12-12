@@ -1,7 +1,7 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: {{ .Release.Name }}-coredns-pdb
+  name: {{ .Release.Name }}-pdb
 spec:
   minAvailable: 1
   selector:

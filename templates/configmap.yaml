@@ -1,12 +1,14 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.configMap.name }}
+  name: {{ .Release.Name }}-configmap
 data:
   Corefile: |
     . {
         hosts /etc/blacklist/hosts {
-            {{- .Values.customRecords | join "\n" | nindent 12 }}
+            {{- if .Values.customRecords }}
+              {{- .Values.customRecords | join "\n" | nindent 12 -}}
+            {{ end }}
             no_reverse
             reload 12h
             fallthrough
