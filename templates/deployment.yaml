@@ -14,9 +14,9 @@ spec:
       labels:
         app: coredns
     spec:
-      containers:
-        - name: blacklist-runner
-          image: alpine:3.17.0
+      initContainers:
+        - name: init-blacklist
+          image: busybox:1.35.0
           imagePullPolicy: IfNotPresent
           command:
              - /bin/sh
@@ -24,7 +24,17 @@ spec:
              - echo -e "#!/bin/sh\ncd /etc/blacklist;rm ./hosts;wget -O hosts {{ .Values.blockListUrls | join " " }}" > /etc/periodic/daily/blacklist-runner;
                chmod a+x /etc/periodic/daily/blacklist-runner;
                run-parts /etc/periodic/daily/;
-               crond -f -l 8
+          volumeMounts:
+            - name: coredns-blacklist-vol
+              mountPath: /etc/blacklist
+      containers:
+        - name: blacklist-runner
+          image: alpine:3.17.0
+          imagePullPolicy: IfNotPresent
+          command:
+             - /bin/sh
+             - -c
+             - crond -f -l 8
           resources:
            requests:
             memory: {{ .Values.resources.blacklistRunner.requests.memory }}
