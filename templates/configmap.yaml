@@ -17,5 +17,3 @@ data:
         health
         errors
     }
-  input: |
-    {{- .Values.blockListUrls | join "\n" | nindent 4 }}
