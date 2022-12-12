@@ -32,6 +32,8 @@ spec:
            limits:
             memory: {{ .Values.resources.blacklistRunner.limits.memory }}
           volumeMounts:
+            - name: coredns-config-vol
+              mountPath: /etc/coredns
             - name: coredns-blacklist-vol
               mountPath: /etc/blacklist
         - name: coredns
