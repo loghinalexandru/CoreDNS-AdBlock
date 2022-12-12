@@ -22,7 +22,6 @@ spec:
              - /bin/sh
              - -c
              - cd /etc/blacklist;
-               rm ./hosts;
                wget -O hosts {{ .Values.blockListUrls | join " " }}
           volumeMounts:
             - name: coredns-blacklist-vol
@@ -36,7 +35,6 @@ spec:
              - -c
              - echo -e "#!/bin/sh\ncd /etc/blacklist;rm ./hosts;wget -O hosts {{ .Values.blockListUrls | join " " }}" > /etc/periodic/daily/blacklist-runner;
                chmod a+x /etc/periodic/daily/blacklist-runner;
-               run-parts /etc/periodic/daily/;
                crond -f -l 8
           resources:
            requests:
