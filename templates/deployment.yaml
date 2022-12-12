@@ -16,14 +16,14 @@ spec:
     spec:
       initContainers:
         - name: init-blacklist
-          image: busybox:1.35.0
+          image: busybox:1.35
           imagePullPolicy: IfNotPresent
           command:
              - /bin/sh
              - -c
-             - echo -e "#!/bin/sh\ncd /etc/blacklist;rm ./hosts;wget -O hosts {{ .Values.blockListUrls | join " " }}" > /etc/periodic/daily/blacklist-runner;
-               chmod a+x /etc/periodic/daily/blacklist-runner;
-               run-parts /etc/periodic/daily/;
+             - cd /etc/blacklist;
+               rm ./hosts;
+               wget -O hosts {{ .Values.blockListUrls | join " " }}
           volumeMounts:
             - name: coredns-blacklist-vol
               mountPath: /etc/blacklist
@@ -34,7 +34,10 @@ spec:
           command:
              - /bin/sh
              - -c
-             - crond -f -l 8
+             - echo -e "#!/bin/sh\ncd /etc/blacklist;rm ./hosts;wget -O hosts {{ .Values.blockListUrls | join " " }}" > /etc/periodic/daily/blacklist-runner;
+               chmod a+x /etc/periodic/daily/blacklist-runner;
+               run-parts /etc/periodic/daily/;
+               crond -f -l 8
           resources:
            requests:
             memory: {{ .Values.resources.blacklistRunner.requests.memory }}
