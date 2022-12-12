@@ -6,7 +6,7 @@ data:
   Corefile: |
     . {
         hosts /etc/blacklist/hosts {
-            {{- .Values.customRecords | join "\n" | nindent 12 -}}
+            {{- .Values.customRecords | join "\n" | nindent 12 }}
             no_reverse
             reload 12h
             fallthrough
