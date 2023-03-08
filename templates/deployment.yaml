@@ -23,6 +23,13 @@ spec:
              - -c
              - cd /etc/blacklist;
                wget -O hosts {{ .Values.blockListUrls | join " " }}
+          resources:
+           requests:
+            cpu: 200m
+            memory: 20Mi
+           limits:
+            cpu: 200m
+            memory: 20Mi
           volumeMounts:
             - name: coredns-blacklist-vol
               mountPath: /etc/blacklist
@@ -38,9 +45,10 @@ spec:
                crond -f -l 8
           resources:
            requests:
-            memory: {{ .Values.resources.blacklistRunner.requests.memory }}
             cpu: {{ .Values.resources.blacklistRunner.requests.cpu }}
+            memory: {{ .Values.resources.blacklistRunner.requests.memory }}
            limits:
+            cpu: {{ .Values.resources.blacklistRunner.limits.cpu }}
             memory: {{ .Values.resources.blacklistRunner.limits.memory }}
           volumeMounts:
             - name: coredns-blacklist-vol
@@ -50,9 +58,10 @@ spec:
           imagePullPolicy: IfNotPresent
           resources:
            requests:
-            memory: {{ .Values.resources.coredns.requests.memory }}
             cpu: {{ .Values.resources.coredns.requests.cpu }}
+            memory: {{ .Values.resources.coredns.requests.memory }}
            limits:
+            cpu: {{ .Values.resources.coredns.limits.cpu }}
             memory: {{ .Values.resources.coredns.limits.memory }}
           args: ["-conf", "/etc/coredns/Corefile"]
           volumeMounts:
